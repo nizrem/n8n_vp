@@ -9,4 +9,4 @@ services:
     ports:
       - "80:5678"
     volumes:
-      - /root/vol_n8n:/home/node/.n8n
+      - /root/n8n_data:/home/node/.n8n
