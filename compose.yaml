@@ -1,4 +1,5 @@
 cat <<EOF > compose.yaml
+services:cat <<EOF > compose.yaml
 services:
   svr_n8n:
     image: ghcr.io/ricardoandre97/n8n-ffmpeg:latest
