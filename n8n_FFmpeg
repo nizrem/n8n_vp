@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# -------------------------------
+# 🚀 Установка Docker и n8n с FFmpeg
+# -------------------------------
+
+# Обновление системы
+echo "🟢 Обновляем пакеты..."
+sudo apt update
+
+# Установка зависимостей Docker
+echo "🟢 Устанавливаем зависимости Docker..."
+sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+
+# Добавляем Docker GPG ключ
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+# Добавляем Docker репозиторий
+sudo add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+
+# Проверяем политику пакета
+apt-cache policy docker-ce
+
+# Устанавливаем Docker CE
+sudo apt install -y docker-ce
+echo "✅ Docker установлен!"
+
+# -------------------------------
+# 🗂 Создание директории для данных n8n
+# -------------------------------
+echo "📂 Создаем директорию для данных n8n..."
+cd ~
+mkdir -p n8n_data
+sudo chown -R 1000:1000 n8n_data
+sudo chmod -R 755 n8n_data
+echo "✅ Папка ~/n8n_data готова!"
+
+# -------------------------------
+# 🐳 Создание compose.yaml с FFmpeg
+# -------------------------------
+echo "🟢 Создаем compose.yaml с поддержкой FFmpeg..."
+
+cat <<EOF > compose.yaml
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n_container
+    environment:
+      - N8N_SECURE_COOKIE=false
+      - N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true
+      - N8N_EDITOR_BASE_URL=\${EXTERNAL_IP}
+      - WEBHOOK_URL=\${EXTERNAL_IP}
+      - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
+    ports:
+      - "80:5678"
+    volumes:
+      - /root/n8n_data:/home/node/.n8n
+    # Устанавливаем FFmpeg внутри контейнера при запуске
+    entrypoint: /bin/bash -c "apt update && apt install -y ffmpeg && n8n start"
+EOF
+
+# -------------------------------
+# 🌐 Получаем внешний IP
+# -------------------------------
+export EXTERNAL_IP=http://"$(hostname -I | awk '{print $1}')"
+
+# -------------------------------
+# 🚀 Запуск контейнера
+# -------------------------------
+echo "🟢 Запускаем n8n с Docker Compose..."
+sudo -E docker compose up -d
+
+# -------------------------------
+# 🎉 Завершение
+# -------------------------------
+echo "🎉 Установка завершена!"
+echo "👉 Открой в браузере: $EXTERNAL_IP"
