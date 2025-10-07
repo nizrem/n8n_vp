@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# System Update
+echo "🔄 Updating Ubuntu system..."
+sudo apt update
+sudo apt upgrade -y
+sudo apt dist-upgrade -y
+sudo apt autoremove -y
+sudo apt autoclean
+echo "✅ Ubuntu system updated!"
+
 # Docker Installation
 echo "🚀 Starting Docker installation..."
 sudo apt update
@@ -18,14 +27,19 @@ sudo chown -R 1000:1000 n8n_data
 sudo chmod -R 755 n8n_data
 echo "✅ n8n data volume is ready!"
 
+# Download Dockerfile
+echo "📥 Downloading Dockerfile..."
+curl -fsSL https://raw.githubusercontent.com/zero2launch/n8n_vps/refs/heads/main/Dockerfile -o ~/Dockerfile
+
 # Docker Compose Setup
 echo "🐳 Setting up Docker Compose..."
-wget -O compose.yaml https://raw.githubusercontent.com/zero2launch/n8n_vps/refs/heads/main/compose.yaml || echo "No remote compose.yaml found, using local version."
-
-# Заменяем EXTERNAL_IP на текущий IP
+curl -fsSL https://raw.githubusercontent.com/zero2launch/n8n_vps/refs/heads/main/compose.yaml -o ~/compose.yaml
 export EXTERNAL_IP=http://"$(hostname -I | cut -f1 -d' ')"
 
-# Запуск контейнера
+# Build and start containers
+echo "🔨 Building custom n8n image with ffmpeg..."
+cd ~
+sudo -E docker compose build
 sudo -E docker compose up -d
 
-echo "🎉 Installation complete! Access your n8n at: $EXTERNAL_IP"
+echo "🎉 Installation complete! Access your service at: $EXTERNAL_IP"
