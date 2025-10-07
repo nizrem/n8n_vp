@@ -1,8 +1,8 @@
-# n8n VPS Setup Scripts
+# 🚀 n8n VPS Management Suite
 
-Automated scripts for installing and managing n8n with ffmpeg on Ubuntu VPS.
+Complete production-ready scripts for managing n8n with ffmpeg on Ubuntu VPS.
 
-## 🚀 Quick Start
+## 📥 Installation
 
 ### Install n8n
 ```bash
