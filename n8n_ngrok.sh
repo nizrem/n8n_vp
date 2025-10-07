@@ -2,6 +2,7 @@
 
 # Stop Docker Compose
 echo "🟢 Stopping Docker Compose..."
+cd ~
 sudo -E docker compose down
 echo "🔴 Docker Compose stopped."
 
@@ -32,6 +33,7 @@ echo "🔴 Ngrok setup complete."
 
 # Start Docker Compose
 echo "🟢 Starting Docker Compose..."
+cd ~
 sudo -E docker compose up -d
 
 echo "🔴 All done! Please wait a few minutes and then visit $EXTERNAL_IP to access the n8n UI."
